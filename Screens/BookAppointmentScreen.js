@@ -7,7 +7,7 @@ import { useToast } from 'react-native-toast-notifications';
 import { doc, setDoc } from '@firebase/firestore';
 
 
-const SignUpScreen = ({ navigation }) => {
+const BookAppointmentScreen = ({ navigation }) => {
   // const [name, setName] = useState('');
   // const [email, setEmail] = useState('');
   // const [phonenumber, setPhonenumber] = useState('');
@@ -187,4 +187,4 @@ const styles = StyleSheet.create({
   },  
 });
 
-export default SignUpScreen;
+export default BookAppointmentScreen;
