@@ -1,11 +1,5 @@
-// Screens/SignUpScreen.js
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../firebaseConfig'; // Make sure this path is correct
-import { useToast } from 'react-native-toast-notifications';
-import { doc, setDoc } from '@firebase/firestore';
-
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 const BookAppointmentScreen = ({ navigation }) => {
   // const [name, setName] = useState('');
@@ -40,6 +34,20 @@ const BookAppointmentScreen = ({ navigation }) => {
   //   }
   // };
 
+  const [selectedAppointment, setSelectedAppointment] = useState(null); 
+  const [selectedTime, setSelectedTime] = useState(null); 
+
+  const appointmentType = ['Home visit', 'Online', 'Hospital'];  
+  const availableTime = ['6.00-7.00', '7.00-8.00', '8.00-9.00'];  
+  
+  const handleAppointmentCardPress = (type) => {
+    setSelectedAppointment(type); 
+  };
+  
+  const handleTimeCardPress = (time) => {
+    setSelectedTime(time); 
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Dr. Anjana Gayantha</Text>
@@ -67,39 +75,59 @@ const BookAppointmentScreen = ({ navigation }) => {
       <View style={{ marginBottom: 30 }} /> 
       
       <Text style={styles.title}>Appointment Type</Text>
-      <View style={{ marginBottom: 10 }} /> 
-      <View style={styles.typespace}>
-        <TouchableOpacity style={styles.typebtn} >
-          <Text>Home visit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.typebtn} >
-          <Text>Online</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.typebtn} >
-          <Text>Hospital</Text>
-        </TouchableOpacity>     
-      </View>
+
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 20, paddingLeft: 20, marginTop: 10,}}>
+          {appointmentType.map((type, index) => (
+            <TouchableOpacity 
+              key={index} 
+              style={[
+                styles.typebtn, 
+                selectedAppointment === type && styles.timeselectedCard 
+              ]}
+              onPress={() => handleAppointmentCardPress(type)} 
+            >
+              <Text 
+                style={[
+                  styles.timecardText, 
+                  selectedAppointment === type && styles.timeselectedcardText 
+                ]}
+              >{type}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
       <View style={{ marginBottom: 30 }} /> 
 
       <Text style={styles.title}>Select Date</Text>
       <View style={{ marginBottom: 30 }} />
 
       <Text style={styles.title}>Available Times</Text>
-      <View style={styles.typespace}>
-        <TouchableOpacity style={styles.typebtn} >
-          <Text>6.00-7.00</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.typebtn} >
-          <Text>7.00-8.00</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.typebtn} >
-          <Text>8.00-9.00</Text>
-        </TouchableOpacity>     
+
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 20, paddingLeft: 20, marginTop: 10,}}>
+        {availableTime.map((time, index) => (
+          <TouchableOpacity 
+            key={index} 
+            style={[
+              styles.typebtn, 
+              selectedTime === time && styles.timeselectedCard 
+            ]}
+            onPress={() => handleTimeCardPress(time)} 
+          >
+            <Text 
+              style={[
+                styles.timecardText, 
+                selectedTime === time && styles.timeselectedcardText 
+              ]}
+            >{time}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
-      <View style={{ marginBottom: 40 }} />
-      <TouchableOpacity style={styles.typebtn} >
-        <Text>Continue</Text>
-      </TouchableOpacity>
+
+      <View style={{ marginTop: 40, alignItems:'center',}} >
+        <TouchableOpacity style={styles.continuebtn} onPress={() => navigation.navigate('Patient Details')}>
+          <Text style={{ color: '#fff', fontSize: 19, }}>Continue</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -107,15 +135,14 @@ const BookAppointmentScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,    
-    paddingTop: 40,
     padding: 20,
-    // backgroundColor: '#f5f5f5', 
+    backgroundColor: '#fff', 
   },
   title: {
     fontSize: 21,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#0f747d',     
+    color: '#0891b2',     
   },
   cardspace: {
     alignItems: 'center',   
@@ -148,29 +175,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     marginLeft: 10,
     Width: '50%',
-  },
-  typespace: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  typebtn:{
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    shadowColor: '#000',
-    borderColor: '#000',
-    borderWidth: 1,
-    width: '25%',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    elevation: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-  },
+  },  
   label: {
     fontSize: 16,
     color: '#333', 
@@ -185,6 +190,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', 
     borderRadius: 8, 
   },  
+  typebtn:{
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    borderColor: '#000',
+    borderWidth: 1,
+    paddingRight: 20,
+    paddingLeft: 20,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+  },  
+  timeselectedCard: {
+    backgroundColor: '#67e8f9',
+  },
+  timecardText: {
+    textAlign: 'center',
+  },
+  timeselectedcardText: {
+  },
+  continuebtn: {
+    backgroundColor: '#164e63',    
+    borderRadius: 15,
+    shadowColor: '#000',   
+    paddingRight: 20,
+    paddingLeft: 20,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    width: '50%',
+  }
 });
 
 export default BookAppointmentScreen;
