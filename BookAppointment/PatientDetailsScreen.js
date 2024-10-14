@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
 
 
 const PatientDetailsScreen = ({ navigation }) => {
@@ -55,86 +55,93 @@ const PatientDetailsScreen = ({ navigation }) => {
   // };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Full name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Full Name"
-        // value={username}
-        // onChangeText={setUsername} 
-        readOnly
-      />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'android' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Full name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            // value={username}
+            // onChangeText={setUsername} 
+            readOnly
+          />
 
-      <Text style={styles.title}>Gender</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Gender"
-        // value={username}
-        // onChangeText={setUsername} 
-        readOnly
-      />      
-      
-      <Text style={styles.title}>Age</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Age"
-        // value={username}
-        // onChangeText={setUsername} 
-        readOnly
-      />
+          <Text style={styles.title}>Gender</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Gender"
+            // value={username}
+            // onChangeText={setUsername} 
+            readOnly
+          />      
+          
+          <Text style={styles.title}>Age</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Age"
+            // value={username}
+            // onChangeText={setUsername} 
+            readOnly
+          />
 
-      <Text style={styles.title}>Location</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Location"
-        // value={username}
-        // onChangeText={setUsername} 
-        readOnly
-      />
+          <Text style={styles.title}>Location</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Location"
+            // value={username}
+            // onChangeText={setUsername} 
+            readOnly
+          />
 
-      <Text style={styles.title}>Write your problem</Text>
-      <TextInput
-        style={styles.textArea}
-        placeholder="hello...."
-        // value={username}
-        // onChangeText={setUsername} 
-        multiline={true}
-        numberOfLines={4}
-        required
-      />
+          <Text style={styles.title}>Write your problem</Text>
+          <TextInput
+            style={styles.textArea}
+            placeholder="hello...."
+            // value={username}
+            // onChangeText={setUsername} 
+            multiline={true}
+            numberOfLines={4}
+            required
+          />
 
-      <View style={{ marginTop: 40, alignItems:'center',}} >
-        <TouchableOpacity style={styles.continuebtn} onPress={submitappointmentdetails}>
-          <Text style={{ color: '#fff', fontSize: 19, }}>Continue</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
-            {/* <Image source={require('../assets/Thankyoualerticon.png')} style={styles.modalIcon} /> */}
-            <Text style={styles.modalText}>Thank You!</Text>
-            <Text style={styles.modalSubText}>Your Appointment Successful</Text>
-            <Text style={styles.modalSubText2}>You booked an appointment with </Text>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => {
-                setModalVisible(false);
-                // navigation.navigate('BottomTabs');  
-              }}
-            >
-              <Text style={styles.modalButtonText}>Done</Text>
+          <View style={{ marginTop: 40, alignItems:'center',}} >
+            <TouchableOpacity style={styles.continuebtn} onPress={submitappointmentdetails}>
+              <Text style={{ color: '#fff', fontSize: 19, }}>Continue</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
 
-    </View>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalView}>
+                {/* <Image source={require('../assets/Thankyoualerticon.png')} style={styles.modalIcon} /> */}
+                <Text style={styles.modalText}>Thank You!</Text>
+                <Text style={styles.modalSubText}>Your Appointment Successful</Text>
+                <Text style={styles.modalSubText2}>You booked an appointment with </Text>
+                <TouchableOpacity
+                  style={styles.modalButton}
+                  onPress={() => {
+                    setModalVisible(false);
+                    // navigation.navigate('BottomTabs');  
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -151,8 +158,8 @@ const styles = StyleSheet.create({
   },  
   input: {
     height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
+    borderColor: '#164e63',
+    borderWidth: 2,
     marginBottom: 15,
     paddingHorizontal: 10,
     backgroundColor: '#fff', 
@@ -164,9 +171,9 @@ const styles = StyleSheet.create({
     height: 150,
     justifyContent: "flex-start",
     textAlignVertical: "top", 
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 5,
+    borderColor: '#164e63',
+    borderWidth: 2,
+    borderRadius: 8,
     padding: 10,
     fontSize: 15,
   },
