@@ -52,6 +52,8 @@ const DoctorHomeScreen = ({ navigation }) => {
           </View>          
         </View>
       </View>
+
+      <View style={{ marginTop: 35 }} />
       
       {/* Show loading spinner while fetching data */}
       {loading ? (
@@ -61,21 +63,29 @@ const DoctorHomeScreen = ({ navigation }) => {
         </View>
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          <View style={{ alignItems: 'center'}}>
             {doctor.filter(doctor => doctor.doctor_name.toLowerCase().includes(searchdoctor.toLowerCase())).map(doctor => (
-              <TouchableOpacity key={doctor.id} onPress={() => navigation.navigate('Travel Guide Details', { doctorId: doctor.id })}>
+              // <TouchableOpacity key={doctor.id} onPress={() => navigation.navigate('Travel Guide Details', { doctorId: doctor.id })}>
                 <View style={styles.cards}>
-                  <Image 
-                    style={{ width: 170, height: 150, borderRadius: 8, marginBottom: 5 }} 
-                    source={{ uri: doctor.imageUrl }} 
-                  />
-                  <Text style={styles.cardname}>{doctor.doctor_name}</Text>
-                  <Text style={styles.cardname}>{doctor.doctor_type}</Text>
-                  <Text style={styles.cardname}>{doctor.hospital}</Text>
-                  <Text style={styles.cardname}>{doctor.availability}</Text>               
-                  
+                  <View style={{ flexDirection: 'row'}}>
+                    <Image 
+                      style={{ width: 110, height: 110, borderRadius: 11, marginTop: 5,}} 
+                      source={{ uri: doctor.imageUrl }} 
+                    />
+                    <View style={{ marginLeft: 10,}}>
+                      <Text style={styles.cardname1}>{doctor.doctor_name}</Text>
+                      <Text style={styles.cardname2}>{doctor.doctor_type}</Text>
+                      <Text style={styles.cardname3}>{doctor.hospital}</Text>
+                      <View style={styles.availablitycard}>
+                        <Text style={styles.cardname4}>{doctor.availability}</Text> 
+                      </View>  
+                      <TouchableOpacity style={styles.continuebtn} key={doctor.id} onPress={() => navigation.navigate('Book Appointment', { doctorId: doctor.id })}>
+                        <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold'}}>Book Now</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 </View>
-              </TouchableOpacity>
+              // </TouchableOpacity>
             ))}
           </View>
         </ScrollView>
@@ -142,19 +152,41 @@ const styles = StyleSheet.create({
   cards:{
     backgroundColor: '#fff', 
     marginTop: 15,
-    width: 175,
-    height: 240,
+    width: 340,
+    height: 140,
     borderRadius: 8,
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    alignItems: "center",
+    padding: 10,
   },
-  cardname: {
-    fontSize: 20,
-    textAlign: 'center',
+  availablitycard:{
+    backgroundColor: '#fff', 
+    marginTop: 5,
+    width: 90,
+    // height: 30,
+    borderRadius: 8,
+    borderColor: '#0f747d',
+    borderWidth: 1,
+    padding: 3,
+    alignItems: 'center',
+  },
+  cardname1: {
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#333333',      
+  },
+  cardname2: {
+    fontSize: 13,
+    color: '#677294',      
+  },
+  cardname3: {
+    fontSize: 13,
+    color: '#677294',  
+    marginTop: 3,    
+  },
+  cardname4: {
+    fontSize: 12,
   },
   cardlanguage: {
     fontSize: 13,
@@ -167,7 +199,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
+  continuebtn: {
+    backgroundColor: '#0891B2',    
+    borderRadius: 15,
+    shadowColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 6,
+    width: 130,
+    marginTop: 5,
+  },
 });
 
 export default DoctorHomeScreen;
