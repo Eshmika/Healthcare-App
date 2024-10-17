@@ -43,10 +43,10 @@ const BookAppointmentScreen = ({ route, navigation }) => {
   const availableTime = ['6.00-7.00', '7.00-8.00', '8.00-9.00'];  
 
   const getCurrentWeekDates = () => {
-    const startOfWeek = moment().startOf('isoWeek'); 
+    const today = moment();
     const weekDates = [];
     for (let i = 0; i < 7; i++) {
-      weekDates.push(startOfWeek.clone().add(i, 'days'));
+      weekDates.push(today.clone().add(i, 'days'));
     }
     return weekDates;
   };
@@ -124,23 +124,28 @@ const BookAppointmentScreen = ({ route, navigation }) => {
       <Text style={styles.title}>Select Date</Text>
 
       <View style={styles.weekContainer}>
-          {weekDates.map((date, index) => (
+        {weekDates.map((date, index) => {
+          const isBeforeToday = date.isBefore(moment(), 'day');
+          return (
             <TouchableOpacity 
               key={index} 
               style={[
                 styles.dateCard, 
-                selectedDate === date.format('YYYY-MM-DD') && styles.selectedDateCard
+                selectedDate === date.format('YYYY-MM-DD') && styles.selectedDateCard,
+                isBeforeToday && styles.disabledDateCard 
               ]}
-              onPress={() => setSelectedDate(date.format('YYYY-MM-DD'))}
+              onPress={() => !isBeforeToday && setSelectedDate(date.format('YYYY-MM-DD'))}
+              disabled={isBeforeToday} 
             >
-              <Text style={styles.dateText}>{date.format('MMM')}</Text>
+              <Text style={[styles.dateText, isBeforeToday && styles.disabledText]}>{date.format('MMM')}</Text>
               <View style={{ marginBottom: 2 }} />
-              <Text style={styles.dateText}>{date.format('ddd')}</Text>  
+              <Text style={[styles.dateText, isBeforeToday && styles.disabledText]}>{date.format('ddd')}</Text>  
               <View style={{ backgroundColor:'#fff', borderRadius: 15, width: 30, height: 30, justifyContent:'center', marginTop:5, }}>
-                <Text style={styles.dateText2}>{date.format('D')}</Text>
+                <Text style={[styles.dateText2, isBeforeToday && styles.disabledText]}>{date.format('D')}</Text>
               </View>
             </TouchableOpacity>
-          ))}
+          );
+        })}
       </View>
 
       <Text style={styles.title}>Available Times</Text>
@@ -379,6 +384,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#fff',
     fontWeight: 'bold',
+  },
+  disabledDateCard: {
+    backgroundColor: '#d3d3d3', 
+    borderColor: '#d3d3d3', 
+  },
+  disabledText: {
+    color: '#a9a9a9', 
   },
 });
 

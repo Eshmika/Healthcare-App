@@ -78,7 +78,8 @@ const DoctorHomeScreen = ({ navigation }) => {
                       <View style={[styles.availablitycard, { backgroundColor: doctor.availability === 'Available' ? color="#0EBE7F" : color="#CA3D3D" }]}>
                         <Text style={styles.cardname4}>{doctor.availability}</Text> 
                       </View>  
-                      <TouchableOpacity style={styles.continuebtn}  onPress={() => navigation.navigate('Book Appointment', { doctorId: doctor.id })}>
+                      <TouchableOpacity style={[styles.continuebtn, { backgroundColor: doctor.availability === 'Available' ? '#0891B2' : '#ccc' }]}   onPress={() => navigation.navigate('Book Appointment', { doctorId: doctor.id })}
+                        disabled={doctor.availability !== 'Available'}>
                         <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold'}}>Book Now</Text>
                       </TouchableOpacity>
                     </View>
