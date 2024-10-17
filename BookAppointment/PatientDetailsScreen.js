@@ -8,13 +8,8 @@ const PatientDetailsScreen = ({ navigation }) => {
   const submitappointmentdetails = async (e) => {
     // e.preventDefault();
     // try {
-    //   await addDoc(collection(db, "travelguide_appointment"), {
-    //     TravelGuideName: name,
-    //     Date: Date,  
-    //     Time: Time, 
-    //     CustomerName: username,
-    //     PhoneNumber: phonenumber,
-    //     GroupSize: value,
+    //   await addDoc(collection(db, "ppointment"), {
+    //     
     //   });
       setModalVisible(true);
     // } catch (error) {
@@ -22,37 +17,6 @@ const PatientDetailsScreen = ({ navigation }) => {
     // }
   };
 
-  // const [name, setName] = useState('');
-  // const [email, setEmail] = useState('');
-  // const [phonenumber, setPhonenumber] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [reenterpassword, setReenterpassword] = useState('');
-  // const toast = useToast();
-
-  // const signUp = async () => {
-  //   try {
-  //     if (password !== reenterpassword) {
-  //       toast.show('Passwords do not match', { type: 'danger' });                
-  //       return;
-  //     } else {
-  //       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  //       const userdetails = auth.currentUser;
-  //       const user = userCredential.user;
-  //       if(userdetails){
-  //         await setDoc(doc(db, "user_details",userdetails.uid), {
-  //           name: name,
-  //           email: email,
-  //           phonenumber: phonenumber
-  //         });
-  //       }
-  //       toast.show(`User signed up with email: ${user.email}`, { type: 'success' });        
-  //       navigation.navigate('Home');
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.show(`${error.message}`, { type: 'danger' });      
-  //   }
-  // };
 
   return (
     <KeyboardAvoidingView
@@ -155,6 +119,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,  
+    color: '#0891b2', 
   },  
   input: {
     height: 50,

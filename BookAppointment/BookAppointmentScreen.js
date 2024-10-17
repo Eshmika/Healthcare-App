@@ -3,37 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, } from 'react-native';
 
 const BookAppointmentScreen = ({ navigation }) => {
-  // const [name, setName] = useState('');
-  // const [email, setEmail] = useState('');
-  // const [phonenumber, setPhonenumber] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [reenterpassword, setReenterpassword] = useState('');
-  // const toast = useToast();
 
-  // const signUp = async () => {
-  //   try {
-  //     if (password !== reenterpassword) {
-  //       toast.show('Passwords do not match', { type: 'danger' });                
-  //       return;
-  //     } else {
-  //       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  //       const userdetails = auth.currentUser;
-  //       const user = userCredential.user;
-  //       if(userdetails){
-  //         await setDoc(doc(db, "user_details",userdetails.uid), {
-  //           name: name,
-  //           email: email,
-  //           phonenumber: phonenumber
-  //         });
-  //       }
-  //       toast.show(`User signed up with email: ${user.email}`, { type: 'success' });        
-  //       navigation.navigate('Home');
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.show(`${error.message}`, { type: 'danger' });      
-  //   }
-  // };
 
   const [selectedAppointment, setSelectedAppointment] = useState(null); 
   const [selectedTime, setSelectedTime] = useState(null); 
@@ -315,7 +285,7 @@ const styles = StyleSheet.create({
   dateCard: {
     backgroundColor: '#cffafe',
     padding: 8,
-    borderRadius: 20,
+    borderRadius: 13,
     borderColor: '#000',
     borderWidth: 1,
   },
