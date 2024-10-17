@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BookAppointmentScreen from './BookAppointment/BookAppointmentScreen';
 import PatientDetailsScreen from './BookAppointment/PatientDetailsScreen';
 import DoctorHomeScreen from './BookAppointment/DoctorHomeScreen';
+import BookedListScreen from './BookAppointment/BookedListScreen';
 import { ToastProvider } from 'react-native-toast-notifications';
 
 const Stack = createNativeStackNavigator();
@@ -17,7 +18,8 @@ export default function App() {
         <Stack.Navigator initialRouteName="Doctor Home">
           <Stack.Screen name="Book Appointment" component={BookAppointmentScreen} />          
           <Stack.Screen name="Patient Details" component={PatientDetailsScreen} />  
-          <Stack.Screen name="Doctor Home" component={DoctorHomeScreen} options={{headerShown:false}}/>       
+          <Stack.Screen name="Doctor Home" component={DoctorHomeScreen} options={{headerShown:false}}/>   
+          <Stack.Screen name="Booked Appointment List" component={BookedListScreen} />    
 
         </Stack.Navigator>
       </NavigationContainer>    
