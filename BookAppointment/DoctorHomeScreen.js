@@ -64,9 +64,8 @@ const DoctorHomeScreen = ({ navigation }) => {
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
           <View style={{ alignItems: 'center'}}>
-            {doctor.filter(doctor => doctor.doctor_name.toLowerCase().includes(searchdoctor.toLowerCase())).map(doctor => (
-              // <TouchableOpacity key={doctor.id} onPress={() => navigation.navigate('Travel Guide Details', { doctorId: doctor.id })}>
-                <View style={styles.cards}>
+            {doctor.filter(doctor => doctor.doctor_name.toLowerCase().includes(searchdoctor.toLowerCase())).map(doctor => (             
+                <View key={doctor.id} style={styles.cards}>
                   <View style={{ flexDirection: 'row'}}>
                     <Image 
                       style={{ width: 110, height: 110, borderRadius: 11, marginTop: 5,}} 
@@ -79,13 +78,12 @@ const DoctorHomeScreen = ({ navigation }) => {
                       <View style={styles.availablitycard}>
                         <Text style={styles.cardname4}>{doctor.availability}</Text> 
                       </View>  
-                      <TouchableOpacity style={styles.continuebtn} key={doctor.id} onPress={() => navigation.navigate('Book Appointment', { doctorId: doctor.id })}>
+                      <TouchableOpacity style={styles.continuebtn}  onPress={() => navigation.navigate('Book Appointment', { doctorId: doctor.id })}>
                         <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold'}}>Book Now</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
                 </View>
-              // </TouchableOpacity>
             ))}
           </View>
         </ScrollView>

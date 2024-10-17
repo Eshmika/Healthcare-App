@@ -1,14 +1,43 @@
 import moment from 'moment';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, } from 'react-native';
+import { doc, getDoc } from '@firebase/firestore';
+import { db } from '../firebaseConfig';
 
-const BookAppointmentScreen = ({ navigation }) => {
-
-
+const BookAppointmentScreen = ({ route, navigation }) => {
   const [selectedAppointment, setSelectedAppointment] = useState(null); 
   const [selectedTime, setSelectedTime] = useState(null); 
   const [selectedDate, setSelectedDate] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const { doctorId } = route.params;
+  const [name, setName] = useState('');
+  const [type, setType] = useState('');
+  const [hospital, setHospital] = useState('');
+  const [price, setPrice] = useState('');
+  const [imageUrl, setimageUrl] = useState('');
+
+  const getDoctordetails = useCallback(async () => {
+    try {
+        const response = await getDoc(doc(db, "Doctors", doctorId));
+        if (response.exists()) {
+            const data = response.data();
+            setName(data.doctor_name);
+            setType(data.doctor_type);
+            setHospital(data.hospital);
+            setPrice(data.Price);
+            setimageUrl(data.imageUrl);            
+        } else {
+            console.log("No such data found!");
+        }
+    } catch (error) {
+        console.error(error);
+    }
+  }, [doctorId]);
+
+  useEffect(() => {
+    getDoctordetails();
+  }, [doctorId, getDoctordetails]);
 
   const appointmentType = ['Home visit', 'Online', 'Hospital'];  
   const availableTime = ['6.00-7.00', '7.00-8.00', '8.00-9.00'];  
@@ -40,27 +69,29 @@ const BookAppointmentScreen = ({ navigation }) => {
     }
   };
 
+  
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Dr. Anjana Gayantha</Text>
+      <Text style={styles.title}>{name}</Text>
       <View style={{ marginBottom: 20 }} />
 
       <View style={styles.cardspace}>
         <View style={styles.card}>
-          <View style={{justifyContent:'center' }}>
+          <View style={{justifyContent:'center' }}>            
             <Image 
-              style={styles.cardleft} 
-              source={require('../assets/doctor.png')} 
-            />
+              style={styles.cardleft}
+              source={imageUrl ? { uri: imageUrl } : require('../assets/Personloading.gif')}
+          />
           </View>     
           <View>
-            <Text style={[styles.cardright, { fontWeight: 'bold' }]}>Dr. Anjana Gayantha</Text>
+            <Text style={[styles.cardright, { fontWeight: 'bold' }]}>{name}</Text>
             <View style={{ borderWidth:1, marginLeft:10, width:190 }} />   
             <View style={{ marginBottom: 8 }} /> 
-            <Text style={styles.cardright}>Surgeon</Text>   
-            <Text style={styles.cardright}>Base Hospital Colombo</Text>  
+            <Text style={styles.cardright}>{type}</Text>   
+            <Text style={styles.cardright}>{hospital}</Text>  
             {/* <View style={{ marginBottom: 20 }} />  */}
-            <Text style={styles.cardright}>Doctor fee: RS </Text>   
+            <Text style={styles.cardright2}>Doctor fee: RS {price}</Text>   
             <Text style={styles.cardright}>Time: 6.00 - 9.00 p.m.</Text>   
           </View>     
         </View>
@@ -181,7 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 21,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#0891b2',     
+    color: '#0891B2',     
   },
   cardspace: {
     alignItems: 'center',   
@@ -205,7 +236,6 @@ const styles = StyleSheet.create({
   },
   cardleft:{
     display: 'flex',    
-    backgroundColor: '#0f747d',   
     borderRadius: 320,
     width: 90,
     height: 90,
@@ -213,6 +243,12 @@ const styles = StyleSheet.create({
   cardright:{
     display: 'flex',
     marginLeft: 10,
+    Width: '50%',
+  },  
+  cardright2:{
+    display: 'flex',
+    marginLeft: 10,
+    fontWeight: 'bold',
     Width: '50%',
   },  
   label: {
@@ -258,7 +294,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   continuebtn: {
-    backgroundColor: '#164e63',    
+    backgroundColor: '#0891B2',    
     borderRadius: 15,
     shadowColor: '#000',   
     paddingRight: 20,
