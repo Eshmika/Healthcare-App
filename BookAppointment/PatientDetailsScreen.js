@@ -1,20 +1,32 @@
+import { addDoc, collection } from '@firebase/firestore';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { db } from '../firebaseConfig';
 
 
-const PatientDetailsScreen = ({ navigation }) => {
+const PatientDetailsScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [problem, setProblem] = useState('');
+  const { doctorName, appointmentType, time, date } = route.params;
 
   const submitappointmentdetails = async (e) => {
-    // e.preventDefault();
-    // try {
-    //   await addDoc(collection(db, "ppointment"), {
-    //     
-    //   });
+    e.preventDefault();
+    try {
+      await addDoc(collection(db, "Appointments"), {
+        PatientName: "Eshmika",
+        Gender: "Male",
+        Age: "25",
+        Location: "Colombo",
+        Problem: problem,
+        DoctorName: doctorName,
+        AppointmentType: appointmentType,
+        Time: time,
+        Date: date,
+      });
       setModalVisible(true);
-    // } catch (error) {
-    //     console.error(error);
-    // }
+    } catch (error) {
+        console.error(error);
+    }
   };
 
 
@@ -29,7 +41,7 @@ const PatientDetailsScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Full Name"
-            // value={username}
+            value="Eshmika"
             // onChangeText={setUsername} 
             readOnly
           />
@@ -38,6 +50,7 @@ const PatientDetailsScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Gender"
+            value="Male"
             // value={username}
             // onChangeText={setUsername} 
             readOnly
@@ -47,6 +60,7 @@ const PatientDetailsScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Age"
+            value="25"
             // value={username}
             // onChangeText={setUsername} 
             readOnly
@@ -56,6 +70,7 @@ const PatientDetailsScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Location"
+            value="Colombo"
             // value={username}
             // onChangeText={setUsername} 
             readOnly
@@ -65,8 +80,8 @@ const PatientDetailsScreen = ({ navigation }) => {
           <TextInput
             style={styles.textArea}
             placeholder="hello...."
-            // value={username}
-            // onChangeText={setUsername} 
+            value={problem}
+            onChangeText={setProblem} 
             multiline={true}
             numberOfLines={4}
             required
@@ -94,7 +109,7 @@ const PatientDetailsScreen = ({ navigation }) => {
                   style={styles.modalButton}
                   onPress={() => {
                     setModalVisible(false);
-                    // navigation.navigate('BottomTabs');  
+                    navigation.navigate('Doctor Home');  
                   }}
                 >
                   <Text style={styles.modalButtonText}>Done</Text>

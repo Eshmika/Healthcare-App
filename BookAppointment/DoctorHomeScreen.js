@@ -75,7 +75,7 @@ const DoctorHomeScreen = ({ navigation }) => {
                       <Text style={styles.cardname1}>{doctor.doctor_name}</Text>
                       <Text style={styles.cardname2}>{doctor.doctor_type}</Text>
                       <Text style={styles.cardname3}>{doctor.hospital}</Text>
-                      <View style={styles.availablitycard}>
+                      <View style={[styles.availablitycard, { backgroundColor: doctor.availability === 'Available' ? color="#0EBE7F" : color="#CA3D3D" }]}>
                         <Text style={styles.cardname4}>{doctor.availability}</Text> 
                       </View>  
                       <TouchableOpacity style={styles.continuebtn}  onPress={() => navigation.navigate('Book Appointment', { doctorId: doctor.id })}>
@@ -159,13 +159,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   availablitycard:{
-    backgroundColor: '#fff', 
     marginTop: 5,
     width: 90,
-    // height: 30,
     borderRadius: 8,
-    borderColor: '#0f747d',
-    borderWidth: 1,
     padding: 3,
     alignItems: 'center',
   },
@@ -184,7 +180,8 @@ const styles = StyleSheet.create({
     marginTop: 3,    
   },
   cardname4: {
-    fontSize: 12,
+    fontSize: 11,
+    color: '#fff',
   },
   cardlanguage: {
     fontSize: 13,
