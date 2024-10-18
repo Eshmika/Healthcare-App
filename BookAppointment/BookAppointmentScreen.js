@@ -63,7 +63,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
 
   const handleContinuePress = () => {
     if (selectedAppointment && selectedTime && selectedDate) {
-      navigation.navigate('Patient Details', {doctorName: name, appointmentType: selectedAppointment, time: selectedTime, date: selectedDate});
+      navigation.navigate('Patient Details', {doctorName: name, appointmentType: selectedAppointment, time: selectedTime, date: selectedDate, price: price});
     } else {      
       setModalVisible(true);
     }

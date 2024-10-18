@@ -19,7 +19,7 @@ export default function App() {
   return (
     <ToastProvider placement='top' offsetTop={100} animationType='zoom-in'>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Profile">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerShown:false}}/>
           <Stack.Screen name="Login" component={LoginScreen} options={{headerShown:false}}/>
           <Stack.Screen name="Profile" component={Profile} options={{headerShown:false}}/>

@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDoc, getDocs } from '@firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, onSnapshot } from '@firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { auth, db } from '../firebaseConfig';
@@ -15,7 +15,7 @@ const BookedListScreen = ({ navigation }) => {
           const patientDoc = await getDoc(doc(db, "Patients", user.uid));
           if (patientDoc.exists()) {
             const patientData = patientDoc.data();
-            setLoggedInPatientName(patientData.name); // Assuming 'name' field in the Patients collection
+            setLoggedInPatientName(patientData.Name); 
           } else {
             console.log("No such document!");
           }
@@ -26,30 +26,31 @@ const BookedListScreen = ({ navigation }) => {
     });
   };
   
-
-  const getDoctordetails = async () => {
-    try {
-      const response = await getDocs(collection(db, "Appointments")); 
-      const doctorList = response.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const getDoctordetails = () => {
+    const appointmentsRef = collection(db, "Appointments");
+    
+    const unsubscribe = onSnapshot(appointmentsRef, (snapshot) => {
+      const doctorList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setDoctors(doctorList);
-      setLoading(false); 
-    } catch (error) {
-      console.error('Error fetching guides:', error);
       setLoading(false);
-    }
-  };  
+    }, (error) => {
+      console.error('Error fetching appointments:', error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  };
   
   const handleDoctorDelete = async (id) => {
-    try {     
-        await deleteDoc(doc(db, "Appointments", id))
+    try {
+      await deleteDoc(doc(db, "Appointments", id))
         .then(() => {
-          getDoctordetails();
+          console.log("Appointment successfully deleted");
         });
     } catch (error) {
-        console.error(error);        
+      console.error(error);        
     }
-  }   
-
+  };
 
   const confirmDoctorDelete = (id) => {
     Alert.alert(
@@ -71,12 +72,16 @@ const BookedListScreen = ({ navigation }) => {
 
   useEffect(() => {
     getLoggedInPatient();
-    getDoctordetails();
+    const unsubscribe = getDoctordetails();
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   return (
     <View style={styles.container}>
-      
       {loading ? (
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color="#39170C" />
@@ -84,22 +89,21 @@ const BookedListScreen = ({ navigation }) => {
         </View>
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>  
-          <View style={{alignItems:'center', }}>
+          <View style={{ alignItems: 'center' }}>
             {doctors
               .filter(doctor => doctor.PatientName === loggedInPatientName)
               .map(doctor => (
-                <View key={doctor.id} >
-                  <View style={styles.cards}>                  
+                <View key={doctor.id}>
+                  <View style={styles.cards}>
                     <Text style={styles.cardname}>Doctor Name: {doctor.DoctorName}</Text>
                     <Text style={styles.cardlanguage}>Patient name: {doctor.PatientName}</Text>     
                     <Text style={styles.cardlanguage}>Date: {doctor.Date}</Text>                  
                     <Text style={styles.cardlanguage}>Time: {doctor.Time}</Text>                  
                     <Text style={styles.cardlanguage}>Appointment Type: {doctor.AppointmentType}</Text>                  
                     <Text style={styles.cardlanguage}>Problem: {doctor.Problem}</Text>
-
-                    <View style={{ alignItems: 'center', marginTop: 20,}}>
+                    <View style={{ alignItems: 'center', marginTop: 20 }}>
                       <TouchableOpacity style={styles.typebtn} onPress={() => confirmDoctorDelete(doctor.id)} >
-                        <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 19,}}>Cancel</Text>
+                        <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 19 }}>Cancel</Text>
                       </TouchableOpacity>
                     </View>                 
                   </View>
@@ -117,18 +121,8 @@ const styles = StyleSheet.create({
     flex: 1,    
     padding: 20,
     backgroundColor: '#fff', 
-    // alignItems: 'center',
   },
-  title: {
-    fontSize: 24,
-    textAlign: 'left',
-    fontWeight: 'bold',
-    marginBottom: 20,   
-    color: '#333333',      
-    flexDirection: 'row',
-  
-  },
-  cards:{
+  cards: {
     backgroundColor: '#fff', 
     marginTop: 5,
     width: 350,
@@ -142,14 +136,12 @@ const styles = StyleSheet.create({
   },
   cardname: {
     fontSize: 23,
-    // textAlign: 'center',
     fontWeight: 'bold',
     color: '#333333',
     marginBottom: 10,      
   },
   cardlanguage: {
     fontSize: 18,
-    // textAlign: 'center',
     marginBottom: 5, 
     color: '#677294',      
   },

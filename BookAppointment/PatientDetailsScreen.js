@@ -8,7 +8,7 @@ const PatientDetailsScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [problem, setProblem] = useState('');
   const [userdetails, setUserdetails] = useState(null);
-  const { doctorName, appointmentType, time, date } = route.params;
+  const { doctorName, appointmentType, time, date, price } = route.params;
   const [age, setAge] = useState('');
 
   const getUserdetails = async () => {
@@ -57,11 +57,10 @@ const PatientDetailsScreen = ({ route, navigation }) => {
     e.preventDefault();
     try {
       await addDoc(collection(db, "Appointments"), {
-        PatientName: userdetails?.name,
+        PatientName: userdetails?.Name,
         Gender: userdetails?.gender,
         Age: age,
-        // Location: userdetails?.location,
-        Location: "Colombo",
+        Location: userdetails?.location,
         Problem: problem,
         DoctorName: doctorName,
         AppointmentType: appointmentType,
@@ -135,7 +134,7 @@ const PatientDetailsScreen = ({ route, navigation }) => {
                   style={styles.modalButton}
                   onPress={() => {
                     setModalVisible(false);
-                    navigation.navigate('Doctor Home');  
+                    navigation.navigate('Booked Appointment List', { DoctorName: doctorName, Price: price });
                   }}
                 >
                   <Text style={styles.modalButtonText}>Done</Text>
