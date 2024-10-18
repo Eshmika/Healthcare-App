@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc } from '@firebase/firestore';
+import { addDoc, arrayUnion, collection, doc, getDoc, updateDoc } from '@firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { auth, db } from '../firebaseConfig';
@@ -55,21 +55,25 @@ const PatientDetailsScreen = ({ route, navigation }) => {
 
   const submitappointmentdetails = async (e) => {
     e.preventDefault();
-    try {
-      await addDoc(collection(db, "Appointments"), {
-        PatientName: userdetails?.Name,
-        Gender: userdetails?.gender,
-        Age: age,
-        Location: userdetails?.location,
-        Problem: problem,
+    try {      
+      const appointment = {
         DoctorName: doctorName,
         AppointmentType: appointmentType,
         Time: time,
         Date: date,
+        Problem: problem,
+        Age: age,
+      };
+  
+      const patientDocRef = doc(db, "Patients", auth.currentUser.uid);
+
+      await updateDoc(patientDocRef, {
+        appointments: arrayUnion(appointment),
       });
+  
       setModalVisible(true);
     } catch (error) {
-        console.error(error);
+      console.error("Error saving appointment details:", error);
     }
   };
 

@@ -1,58 +1,64 @@
-import { collection, deleteDoc, doc, getDoc, onSnapshot } from '@firebase/firestore';
+import { doc, getDoc, updateDoc } from '@firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { auth, db } from '../firebaseConfig';
 
 const BookedListScreen = ({ navigation }) => {
-  const [doctors, setDoctors] = useState([]); 
+  const [appointments, setAppointments] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [loggedInPatientName, setLoggedInPatientName] = useState('');
 
-  const getLoggedInPatient = async () => {
+  const getLoggedInPatientAppointments = async () => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         try {
           const patientDoc = await getDoc(doc(db, "Patients", user.uid));
           if (patientDoc.exists()) {
             const patientData = patientDoc.data();
-            setLoggedInPatientName(patientData.Name); 
+            setLoggedInPatientName(patientData.Name);
+
+            if (patientData.appointments) {
+              setAppointments(patientData.appointments);
+            }
           } else {
             console.log("No such document!");
           }
+          setLoading(false);
         } catch (error) {
           console.error("Error fetching patient data:", error);
+          setLoading(false);
         }
       }
     });
   };
-  
-  const getDoctordetails = () => {
-    const appointmentsRef = collection(db, "Appointments");
-    
-    const unsubscribe = onSnapshot(appointmentsRef, (snapshot) => {
-      const doctorList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setDoctors(doctorList);
-      setLoading(false);
-    }, (error) => {
-      console.error('Error fetching appointments:', error);
-      setLoading(false);
-    });
 
-    return () => unsubscribe();
-  };
-  
-  const handleDoctorDelete = async (id) => {
+  const handleAppointmentDelete = async (index) => {
     try {
-      await deleteDoc(doc(db, "Appointments", id))
-        .then(() => {
+      const user = auth.currentUser;
+      if (user) {
+        const patientDocRef = doc(db, "Patients", user.uid);
+        const patientDoc = await getDoc(patientDocRef);
+
+        if (patientDoc.exists()) {
+          const patientData = patientDoc.data();
+          const updatedAppointments = [...patientData.appointments];
+
+          updatedAppointments.splice(index, 1);
+          
+          await updateDoc(patientDocRef, {
+            appointments: updatedAppointments,
+          });
+
           console.log("Appointment successfully deleted");
-        });
+          setAppointments(updatedAppointments);
+        }
+      }
     } catch (error) {
-      console.error(error);        
+      console.error("Error deleting appointment:", error);        
     }
   };
 
-  const confirmDoctorDelete = (id) => {
+  const confirmAppointmentDelete = (index) => {
     Alert.alert(
       "Cancel Appointment",
       "Are you sure you want to cancel the appointment?",
@@ -63,7 +69,7 @@ const BookedListScreen = ({ navigation }) => {
         },
         {
           text: "Yes",
-          onPress: () => handleDoctorDelete(id),
+          onPress: () => handleAppointmentDelete(index),
         }
       ],
       { cancelable: true }
@@ -71,13 +77,7 @@ const BookedListScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    getLoggedInPatient();
-    const unsubscribe = getDoctordetails();
-
-    // Clean up the listener when the component unmounts
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
+    getLoggedInPatientAppointments();
   }, []);
 
   return (
@@ -90,25 +90,23 @@ const BookedListScreen = ({ navigation }) => {
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>  
           <View style={{ alignItems: 'center' }}>
-            {doctors
-              .filter(doctor => doctor.PatientName === loggedInPatientName)
-              .map(doctor => (
-                <View key={doctor.id}>
-                  <View style={styles.cards}>
-                    <Text style={styles.cardname}>Doctor Name: {doctor.DoctorName}</Text>
-                    <Text style={styles.cardlanguage}>Patient name: {doctor.PatientName}</Text>     
-                    <Text style={styles.cardlanguage}>Date: {doctor.Date}</Text>                  
-                    <Text style={styles.cardlanguage}>Time: {doctor.Time}</Text>                  
-                    <Text style={styles.cardlanguage}>Appointment Type: {doctor.AppointmentType}</Text>                  
-                    <Text style={styles.cardlanguage}>Problem: {doctor.Problem}</Text>
-                    <View style={{ alignItems: 'center', marginTop: 20 }}>
-                      <TouchableOpacity style={styles.typebtn} onPress={() => confirmDoctorDelete(doctor.id)} >
-                        <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 19 }}>Cancel</Text>
-                      </TouchableOpacity>
-                    </View>                 
-                  </View>
+            {appointments.map((appointment, index) => (
+              <View key={index}>
+                <View style={styles.cards}>
+                  <Text style={styles.cardname}>Doctor Name: {appointment.DoctorName}</Text>
+                  <Text style={styles.cardlanguage}>Patient name: {loggedInPatientName}</Text>     
+                  <Text style={styles.cardlanguage}>Date: {appointment.Date}</Text>                  
+                  <Text style={styles.cardlanguage}>Time: {appointment.Time}</Text>                  
+                  <Text style={styles.cardlanguage}>Appointment Type: {appointment.AppointmentType}</Text>                  
+                  <Text style={styles.cardlanguage}>Problem: {appointment.Problem}</Text>
+                  <View style={{ alignItems: 'center', marginTop: 20 }}>
+                    <TouchableOpacity style={styles.typebtn} onPress={() => confirmAppointmentDelete(index)} >
+                      <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 19 }}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>                 
                 </View>
-              ))}
+              </View>
+            ))}
           </View>
         </ScrollView>
       )}
