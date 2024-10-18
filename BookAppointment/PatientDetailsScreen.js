@@ -41,7 +41,7 @@ const PatientDetailsScreen = ({ route, navigation }) => {
             }
           }
         } else {             
-          toast.show('Admin details not found', { type: 'danger' }); 
+          toast.show('Details not found', { type: 'danger' }); 
         }
       } else {           
         console.log('User not logged in');
@@ -84,7 +84,7 @@ const PatientDetailsScreen = ({ route, navigation }) => {
         <View style={styles.container}>
           <Text style={styles.title}>Full name</Text>
           <View style={styles.input}>
-            <Text style={styles.title2}>{userdetails?.name}</Text>
+            <Text style={styles.title2}>{userdetails?.Name}</Text>
           </View>         
 
           <Text style={styles.title}>Gender</Text>

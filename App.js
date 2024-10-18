@@ -9,6 +9,8 @@ import DoctorHomeScreen from './BookAppointment/DoctorHomeScreen';
 import BookedListScreen from './BookAppointment/BookedListScreen';
 import SignUpScreen from './Auth/SignupScreen';
 import LoginScreen from './Auth/LoginScreen';
+import Profile from './Auth/Profile';
+import UpdateProfile from './Auth/UpdateProfile';
 import { ToastProvider } from 'react-native-toast-notifications';
 
 const Stack = createNativeStackNavigator();
@@ -17,9 +19,11 @@ export default function App() {
   return (
     <ToastProvider placement='top' offsetTop={100} animationType='zoom-in'>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Booked Appointment List">
+        <Stack.Navigator initialRouteName="Profile">
           <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerShown:false}}/>
           <Stack.Screen name="Login" component={LoginScreen} options={{headerShown:false}}/>
+          <Stack.Screen name="Profile" component={Profile} options={{headerShown:false}}/>
+          <Stack.Screen name="Update Profile" component={UpdateProfile} options={{headerShown:false}}/>          
           <Stack.Screen name="Book Appointment" component={BookAppointmentScreen} />          
           <Stack.Screen name="Patient Details" component={PatientDetailsScreen} />  
           <Stack.Screen name="Doctor Home" component={DoctorHomeScreen} options={{headerShown:false}}/>   

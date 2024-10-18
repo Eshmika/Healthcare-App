@@ -52,10 +52,10 @@ const SignUpScreen = ({ navigation }) => {
         if (userdetails) {
             await setDoc(doc(db, "Patients", userdetails.uid), {
             patientId: patientId,
-            name: name,
+            Name: name,
             ContactInfo: {
               email: email,
-              phoneNumber: phonenumber
+              phone: phonenumber
             },
             dateOfBirth: new Date(dateOfBirth), 
             gender: gender
