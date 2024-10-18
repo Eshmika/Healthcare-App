@@ -1,12 +1,31 @@
-import { collection, deleteDoc, doc, getDocs } from '@firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs } from '@firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
-import { db } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 
 const BookedListScreen = ({ navigation }) => {
-  const [doctors, setDoctors] = useState([]);   
-  const [searchdoctor, setSearchDoctor] = useState('');
+  const [doctors, setDoctors] = useState([]); 
   const [loading, setLoading] = useState(true);
+  const [loggedInPatientName, setLoggedInPatientName] = useState('');
+
+  const getLoggedInPatient = async () => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        try {
+          const patientDoc = await getDoc(doc(db, "Patients", user.uid));
+          if (patientDoc.exists()) {
+            const patientData = patientDoc.data();
+            setLoggedInPatientName(patientData.name); // Assuming 'name' field in the Patients collection
+          } else {
+            console.log("No such document!");
+          }
+        } catch (error) {
+          console.error("Error fetching patient data:", error);
+        }
+      }
+    });
+  };
+  
 
   const getDoctordetails = async () => {
     try {
@@ -51,6 +70,7 @@ const BookedListScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
+    getLoggedInPatient();
     getDoctordetails();
   }, []);
 
@@ -64,27 +84,27 @@ const BookedListScreen = ({ navigation }) => {
         </View>
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>  
-          {/* <Text style={styles.title}>Book Travel Guide List</Text> */}
           <View style={{alignItems:'center', }}>
-            {doctors.filter(doctor => doctor.DoctorName.toLowerCase().includes(searchdoctor.toLowerCase())).map(doctor => (
-              <View key={doctor.id} >
-                <View style={styles.cards}>                  
-                  <Text style={styles.cardname}>Doctor Name: {doctor.DoctorName}</Text>
-                  <Text style={styles.cardlanguage}>Patient name: {doctor.PatientName}</Text>     
-                  <Text style={styles.cardlanguage}>Date: {doctor.Date}</Text>                  
-                  <Text style={styles.cardlanguage}>Time: {doctor.Time}</Text>                  
-                  <Text style={styles.cardlanguage}>Appointment Type: {doctor.AppointmentType}</Text>                  
-                  <Text style={styles.cardlanguage}>Problem: {doctor.Problem}</Text>
+            {doctors
+              .filter(doctor => doctor.PatientName === loggedInPatientName)
+              .map(doctor => (
+                <View key={doctor.id} >
+                  <View style={styles.cards}>                  
+                    <Text style={styles.cardname}>Doctor Name: {doctor.DoctorName}</Text>
+                    <Text style={styles.cardlanguage}>Patient name: {doctor.PatientName}</Text>     
+                    <Text style={styles.cardlanguage}>Date: {doctor.Date}</Text>                  
+                    <Text style={styles.cardlanguage}>Time: {doctor.Time}</Text>                  
+                    <Text style={styles.cardlanguage}>Appointment Type: {doctor.AppointmentType}</Text>                  
+                    <Text style={styles.cardlanguage}>Problem: {doctor.Problem}</Text>
 
-                  <View style={{ alignItems: 'center', marginTop: 20,}}>
-                    <TouchableOpacity style={styles.typebtn} onPress={() => confirmDoctorDelete(doctor.id)} >
-                      <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 19,}}>Cancel</Text>
-                    </TouchableOpacity>
-                  </View>                 
+                    <View style={{ alignItems: 'center', marginTop: 20,}}>
+                      <TouchableOpacity style={styles.typebtn} onPress={() => confirmDoctorDelete(doctor.id)} >
+                        <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 19,}}>Cancel</Text>
+                      </TouchableOpacity>
+                    </View>                 
+                  </View>
                 </View>
-                
-              </View>
-            ))}
+              ))}
           </View>
         </ScrollView>
       )}

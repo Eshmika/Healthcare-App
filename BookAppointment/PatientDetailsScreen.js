@@ -1,21 +1,66 @@
-import { addDoc, collection } from '@firebase/firestore';
-import React, { useState } from 'react';
+import { addDoc, collection, doc, getDoc } from '@firebase/firestore';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
-import { db } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 
 
 const PatientDetailsScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [problem, setProblem] = useState('');
+  const [userdetails, setUserdetails] = useState(null);
   const { doctorName, appointmentType, time, date } = route.params;
+  const [age, setAge] = useState('');
+
+  const getUserdetails = async () => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const docRef = doc(db, "Patients", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setUserdetails(data);
+          
+          // Calculate age based on date of birth
+          if (data.dateOfBirth) {
+            let birthDate;
+            
+            // Check if dateOfBirth is a Firestore Timestamp
+            if (data.dateOfBirth instanceof Object && data.dateOfBirth.toDate) {
+              birthDate = data.dateOfBirth.toDate();
+            } else {
+              birthDate = new Date(data.dateOfBirth);
+            }
+  
+            if (!isNaN(birthDate.getTime())) { // Ensure it's a valid date
+              const currentYear = new Date().getFullYear();
+              const birthYear = birthDate.getFullYear();
+              const calculatedAge = currentYear - birthYear;
+              setAge(calculatedAge.toString());
+            } else {
+              console.error("Invalid date format for dateOfBirth");
+            }
+          }
+        } else {             
+          toast.show('Admin details not found', { type: 'danger' }); 
+        }
+      } else {           
+        console.log('User not logged in');
+      }
+    });
+  };
+
+  useEffect(() => {
+      getUserdetails();
+  }, []);
 
   const submitappointmentdetails = async (e) => {
     e.preventDefault();
     try {
       await addDoc(collection(db, "Appointments"), {
-        PatientName: "Eshmika",
-        Gender: "Male",
-        Age: "25",
+        PatientName: userdetails?.name,
+        Gender: userdetails?.gender,
+        Age: age,
+        // Location: userdetails?.location,
         Location: "Colombo",
         Problem: problem,
         DoctorName: doctorName,
@@ -38,43 +83,24 @@ const PatientDetailsScreen = ({ route, navigation }) => {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
           <Text style={styles.title}>Full name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Full Name"
-            value="Eshmika"
-            // onChangeText={setUsername} 
-            readOnly
-          />
+          <View style={styles.input}>
+            <Text style={styles.title2}>{userdetails?.name}</Text>
+          </View>         
 
           <Text style={styles.title}>Gender</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Gender"
-            value="Male"
-            // value={username}
-            // onChangeText={setUsername} 
-            readOnly
-          />      
+          <View style={styles.input}>
+            <Text style={styles.title2}>{userdetails?.gender}</Text>
+          </View>            
           
           <Text style={styles.title}>Age</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Age"
-            value="25"
-            // value={username}
-            // onChangeText={setUsername} 
-            readOnly
-          />
-
+          <View style={styles.input}>
+            <Text style={styles.title2}>{age}</Text>
+          </View>   
+         
           <Text style={styles.title}>Location</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Location"
-            value="Colombo"
-            // value={username}
-            // onChangeText={setUsername} 
-            readOnly
-          />
+          <View style={styles.input}>
+            <Text style={styles.title2}>{userdetails?.location}</Text>
+          </View>           
 
           <Text style={styles.title}>Write your problem</Text>
           <TextInput
@@ -136,6 +162,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,  
     color: '#0891b2', 
   },  
+  title2: {
+    fontSize: 18,
+    marginBottom: 10, 
+  },  
   input: {
     height: 50,
     borderColor: '#164e63',
@@ -144,7 +174,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: '#fff', 
     borderRadius: 8, 
-    padding: 10,
+    paddingTop: 10,
     fontSize: 15,
   }, 
   textArea: {

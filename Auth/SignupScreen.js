@@ -50,16 +50,16 @@ const SignUpScreen = ({ navigation }) => {
         const patientId = await generatePatientId(); // Generate formatted patient ID
   
         if (userdetails) {
-          await setDoc(doc(db, "Patients", userdetails.uid), {
+            await setDoc(doc(db, "Patients", userdetails.uid), {
             patientId: patientId,
             name: name,
             ContactInfo: {
               email: email,
               phoneNumber: phonenumber
             },
-            dateOfBirth: dateOfBirth,
+            dateOfBirth: new Date(dateOfBirth), 
             gender: gender
-          });
+            });
         }
         navigation.navigate('Login');
       }

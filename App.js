@@ -17,7 +17,7 @@ export default function App() {
   return (
     <ToastProvider placement='top' offsetTop={100} animationType='zoom-in'>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Booked Appointment List">
           <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerShown:false}}/>
           <Stack.Screen name="Login" component={LoginScreen} options={{headerShown:false}}/>
           <Stack.Screen name="Book Appointment" component={BookAppointmentScreen} />          
