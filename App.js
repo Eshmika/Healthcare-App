@@ -11,6 +11,7 @@ import SignUpScreen from './Auth/SignupScreen';
 import LoginScreen from './Auth/LoginScreen';
 import Profile from './Auth/Profile';
 import UpdateProfile from './Auth/UpdateProfile';
+import InsuranceFormScreen from './Payments/InsuranceDetailsScreen';
 import { ToastProvider } from 'react-native-toast-notifications';
 
 const Stack = createNativeStackNavigator();
@@ -27,7 +28,8 @@ export default function App() {
           <Stack.Screen name="Book Appointment" component={BookAppointmentScreen} />          
           <Stack.Screen name="Patient Details" component={PatientDetailsScreen} />  
           <Stack.Screen name="Doctor Home" component={DoctorHomeScreen} options={{headerShown:false}}/>   
-          <Stack.Screen name="Booked Appointment List" component={BookedListScreen} />    
+          <Stack.Screen name="Booked Appointment List" component={BookedListScreen} />
+          <Stack.Screen name="Insurance Form" component={InsuranceFormScreen} />    
 
         </Stack.Navigator>
       </NavigationContainer>    

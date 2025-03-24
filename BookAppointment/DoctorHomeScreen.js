@@ -1,7 +1,7 @@
 import { collection, doc, getDocs } from '@firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+// import Icon from 'react-native-vector-icons/FontAwesome';
 import { db } from '../firebaseConfig';
 
 const DoctorHomeScreen = ({ navigation }) => {
@@ -15,8 +15,8 @@ const DoctorHomeScreen = ({ navigation }) => {
       const doctorList = response.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setDoctor(doctorList);
       setLoading(false); 
-    } catch (error) {
-      console.error('Error fetching guides:', error);
+    } catch  {
+      console.log("No such data found!");
       setLoading(false);
     }
   };  
@@ -41,13 +41,13 @@ const DoctorHomeScreen = ({ navigation }) => {
           
           <View style={{alignItems: 'center',}}>
             <View style={styles.searchbar}>  
-              <Icon name="search" size={20} color="#677294" />
+              {/* <Icon name="search" size={20} color="#677294" /> */}
               <TextInput
                 style={styles.input}
                 placeholder="Search...."
                 onChangeText={setSearchDoctor}               
               />
-              <Icon name="close" size={20} color="#677294" />
+              {/* <Icon name="close" size={20} color="#677294" /> */}
             </View>
           </View>          
         </View>
